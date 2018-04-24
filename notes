@@ -1,0 +1,124 @@
+Steve lecture:  4/24
+props : go from parent to child
+the way data strcutured implies how the component will be strcutured
+      //App -> image->content[]//comments here tied to image.
+create-react-app nameoffolder, likes rails new\
+npm install -g yarn   //yarn wrapper for npm, except it caches unlike npm
+
+index.js    render app, index is mostly for  config
+registerserviceworker : for progressive web apps: not for us.
+error jsx not defined   you didnt import react into file
+
+assign data from one component to different component
+<paintingDetails {...paintingData} <- sprad the data from paintingData to send to paintingDetails
+
+functional component  (different from class component)
+  const COmmentList= (props)=>{
+    console.log(props)  //not this.props , isnt a class component
+    return (
+      <div>Comment</div>
+    )
+  }
+export default CommentList
+//new file
+import CommentList from 'commentlist.js'
+render(){return(<CommentList />)}           //how we use commentlist in comment.js
+
+how to initialize class?    call it in a render. there is no "new" like in JS
+super()                     inherits from react. calls the constructor that it is inheriting from
+                            always have a super in your constructor
+setState changes               trigger rerender implcictly
+  state = {liked:false}
+  this.state.liked = !this.state.liked //doesnt call render
+  likePainting = (event)               //calls render!
+    =>{this.setState({like: !this.state.liked})} //toggle
+
+
+
+
+////////////////////////////////////////State
+State is basically data that is mutated in your component
+ while a component can't change its own props, it can change its state.
+State is used to handle several things in your component:
+ Interactivity (e.g. changing data when a user clicks a button)
+ Fetching remote data (remote data is, by definition, not available right away when the component is mounted —
+  state gives us a way of updating the component once that data arrives)
+ Reacting to the passing of time (i.e. setting an interval or timeout)
+
+ State vs Prop
+ The best way to figure out if data should go in props or state is to ask ourselves 'Will this data ever change?'.
+  If not, it's a prop. If it will, it should go in state!
+
+
+ follow along by running npm install && npm start in your terminal.
+
+ example:
+  A toggle button has an on and off state. Using props for that value wouldn't work, since we can't actually change our props!
+  /////// state example:
+  // src/components/ToggleButton.js
+  import React from 'react';
+    class ToggleButton extends React.Component {
+    constructor() {
+      super();
+      this.state = { isEnabled: false     }
+    }
+    render() {
+      return (
+        <button className="toggle-button">
+          I am toggled {this.state.isEnabled ? 'on' : 'off'}
+        </button>
+      )    }  }
+  export default ToggleButton;
+  // src/components/Address.js
+  import React from 'react';
+  class Address extends React.Component {
+    constructor(props){
+      super(props);
+      this.state = { fullAddress: `${props.street},${props.city}`}
+    }
+    render(){
+      return(
+        <div className="address">
+          {/* { this.state.fullAddress}  below is better than this */}
+          {this.props.street}, {this.props.city}
+        </div>
+      );    }  }//class
+  export default Address;
+  // src/index.js
+  import React from 'react';
+  import ReactDOM from 'react-dom';
+  import ToggleButton from './components/ToggleButton'
+  import Address from './components/Address'
+  ReactDOM.render(
+    // <div>Components Need To Be Mounted</div>,
+    <div>
+      <ToggleButton />
+      <Address
+        street="Santa Monica Blvd."
+        city="Santa Monica"
+      />
+    </div>
+    ,
+    document.getElementById('root')
+  )
+///////////////////////////Event System
+
+SyntheticEvent React has its own event system with special event handlers
+ The reason for having a specific event system instead of using native events is cross-browser compatibilit
+Events : https://facebook.github.io/react/docs/events.html#supported-events
+event.target            get the target of an event
+event.preventDefault()  prevent a default action
+Event pooling           whenever an event fires, its event data (an object) is sent to the callback.
+                       the event object is in effect being sent back to the pool for use in a later event.
+                        means wthat when you inspect the properties become null
+persist event pool
+                      store the data you need in a variable (e.g. const target = event.target),
+                      make the event persistent by calling that method: event.persist().
+//////Example: event
+class Tickler extends React.Component {
+  tickle = () => {    console.log('Tee hee!');  }
+  render() {
+    return (
+      <button>Tickle me!</button>                       //no event
+      <button onClick={this.tickle}>Tickle me!</button> //event
+    );  }}
